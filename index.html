@@ -1608,28 +1608,49 @@
       `;
 
       try {
-        const response = await fetch('/api/shopify/products', {
+        console.log('Fetching products from Shopify...');
+        
+        // Use direct Shopify Storefront API for production
+        const SHOPIFY_STORE = 'kubox-7291.myshopify.com';
+        const STOREFRONT_ACCESS_TOKEN = '095ee2e8ebb84ea94284a19ca00c04c7';
+        
+        const response = await fetch(`https://${SHOPIFY_STORE}/api/2024-10/graphql.json`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'X-Shopify-Storefront-Access-Token': STOREFRONT_ACCESS_TOKEN
+          },
           body: JSON.stringify({ query })
         });
 
+        console.log('Response status:', response.status);
         const data = await response.json();
         console.log('Shopify API Response:', data);
         
+        if (data.errors) {
+          console.error('GraphQL Errors:', data.errors);
+          document.getElementById('loadingIndicator').style.display = 'none';
+          document.getElementById('errorIndicator').style.display = 'block';
+          document.getElementById('errorIndicator').innerHTML = '<p style="font-size: 18px; color: #e74c3c;">API Error: ' + JSON.stringify(data.errors) + '</p>';
+          return;
+        }
+        
         if (data.data && data.data.products) {
           const products = data.data.products.edges.map(e => e.node);
+          console.log('Products found:', products.length);
           console.log('Products with images:', products);
           renderProducts(products);
         } else {
           console.error('No products found or error:', data);
           document.getElementById('loadingIndicator').style.display = 'none';
           document.getElementById('errorIndicator').style.display = 'block';
+          document.getElementById('errorIndicator').innerHTML = '<p style="font-size: 18px; color: #e74c3c;">No products data in response. Check console for details.</p>';
         }
       } catch (error) {
         console.error('Fetch Error:', error);
         document.getElementById('loadingIndicator').style.display = 'none';
         document.getElementById('errorIndicator').style.display = 'block';
+        document.getElementById('errorIndicator').innerHTML = '<p style="font-size: 18px; color: #e74c3c;">Failed to load products: ' + error.message + '</p>';
       }
     }
 
@@ -1919,10 +1940,16 @@
         };
         
         console.log('Sending checkout request...');
-        const response = await fetch('/api/shopify/checkout', {
+        
+        // Use direct Shopify Storefront API for production
+        const SHOPIFY_STORE = 'kubox-7291.myshopify.com';
+        const STOREFRONT_ACCESS_TOKEN = '095ee2e8ebb84ea94284a19ca00c04c7';
+        
+        const response = await fetch(`https://${SHOPIFY_STORE}/api/2024-10/graphql.json`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Shopify-Storefront-Access-Token': STOREFRONT_ACCESS_TOKEN
           },
           body: JSON.stringify({
             query: checkoutMutation,
