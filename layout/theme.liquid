@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <title>{% if page_title %}{{ page_title }} — {% endif %}{{ shop.name }}</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+  {{ content_for_header }}
+</head>
+<body class="font-sans">
+  <header class="container">
+    <a href="{{ routes.root_url }}" class="logo">{{ shop.name }}</a>
+    <nav>
+      <a href="{{ routes.all_products_collection_url }}">Storage</a>
+      <a href="/pages/contact">Contact</a>
+    </nav>
+  </header>
+
+  <main role="main">
+    {{ content_for_layout }}
+  </main>
+
+  <footer class="container">
+    <small>© {{ 'now' | date: '%Y' }} {{ shop.name }}</small>
+  </footer>
+</body>
+</html>

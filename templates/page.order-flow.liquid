@@ -1,0 +1,34 @@
+{% comment %}
+  Custom Order Flow Page Template
+  Usage: Create a page in Shopify admin and assign this template
+{% endcomment %}
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} - {{ shop.name }}</title>
+  {{ content_for_header }}
+  <style>
+    /* Include all the CSS from index.html here */
+    {{ 'order-flow.css' | asset_url | stylesheet_tag }}
+  </style>
+</head>
+<body>
+  {{ page.content }}
+  
+  <!-- Include the order flow HTML structure -->
+  <div id="kubox-order-flow">
+    <!-- Copy the entire body content from index.html -->
+  </div>
+
+  <script>
+    // Shopify configuration
+    const SHOPIFY_STORE = '{{ shop.permanent_domain }}';
+    const STOREFRONT_ACCESS_TOKEN = '095ee2e8ebb84ea94284a19ca00c04c7';
+    
+    // Include all JavaScript from index.html
+  </script>
+</body>
+</html>

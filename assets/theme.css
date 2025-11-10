@@ -1,0 +1,10 @@
+:root{--c:#111;--muted:#666;--bg:#fff;--brand:#e11;}
+*{box-sizing:border-box} body{margin:0;color:var(--c);background:var(--bg);font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif}
+.container{max-width:1100px;margin:auto;padding:16px}
+.grid{display:grid;gap:16px}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{border:1px solid #eee;border-radius:12px;padding:16px}
+.btn{display:inline-block;padding:12px 18px;border-radius:10px;background:var(--brand);color:#fff;text-decoration:none}
+.hero{padding:56px 0}
+.hero .kicker{color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-size:.85rem}
+.faq-item summary{cursor:pointer;font-weight:600}

@@ -1,0 +1,2144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Order Storage - InboxStorage</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;800&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Heebo', sans-serif;
+      line-height: 1.6;
+      color: #2c2c2c;
+      background: #f8f8f8;
+    }
+    
+    .container {
+      max-width: 1260px;
+      padding: 0 20px;
+    }
+    
+    /* Top Bar */
+    .top-bar {
+      background: #f7f7f7;
+      padding: 10px 0;
+      font-size: 13px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .top-bar .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .top-bar-left {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      color: #2c2c2c;
+    }
+    
+    .top-bar-left span {
+      font-size: 13px;
+      color: #2c2c2c;
+    }
+    
+    .top-bar-left span strong {
+      font-weight: 700;
+      color: #1d2159;
+    }
+    
+    .top-bar-right .btn-kubox {
+      background: #FDB913;
+      color: #1d2159;
+      padding: 10px 25px;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 13px;
+      transition: background 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .top-bar-right .btn-kubox:hover {
+      background: #e5a711;
+    }
+    
+    /* Header */
+    header {
+      background: #fff;
+      padding: 18px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    header .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo-text {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1d2159;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-text span {
+      color: #FDB913;
+    }
+    
+    .logo-img {
+      height: 40px;
+      width: auto;
+    }
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: #1d2159;
+      font-weight: 600;
+      font-size: 14px;
+      transition: color 0.3s;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    nav a:hover {
+      color: #FDB913;
+    }
+    
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #FDB913;
+      transition: width 0.3s;
+    }
+    
+    nav a:hover::after {
+      width: 100%;
+    }
+    
+    nav a .dropdown-arrow {
+      font-size: 8px;
+      margin-left: 2px;
+      opacity: 0.6;
+    }
+    
+    /* Progress Steps */
+    .progress-steps {
+      background: #f8f8f8;
+      padding: 25px 0;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .steps-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .step {
+      display: block;
+      padding: 15px 70px 15px 25px;
+      background: #fff;
+      border-radius: 50px;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+      position: relative;
+    }
+    
+    .step-content {
+      text-align: left;
+    }
+    
+    .step-number {
+      position: absolute !important;
+      right: 15px !important;
+      top: 50% !important;
+      left: auto !important;
+      transform: translateY(-50%) !important;
+      width: 40px;
+      height: 40px;
+      background: #e0e0e0;
+      color: #999;
+      border-radius: 50%;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      margin: 0 !important;
+    }
+    
+    .step.active .step-number {
+      background: #FDB913;
+      color: #1d2159;
+    }
+    
+    .step.active {
+      background: #FFF9E6;
+      border-color: #FDB913;
+    }
+    
+    .step.completed {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+    
+    .step-number {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: #d2d7da;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    
+    .step.active .step-number {
+      background: #FDB913;
+      color: #1d2159;
+    }
+    
+    .step.completed .step-number {
+      background: #4caf50;
+    }
+    
+    .step-content h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: #1d2159;
+    }
+    
+    .step-content p {
+      font-size: 11px;
+      color: #666;
+    }
+    
+    /* Storage Plans */
+    .storage-plans {
+      padding: 30px 20px;
+    }
+    
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .plan-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .plan-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #FDB913, #ffd54f);
+      transform: scaleX(0);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .plan-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(253, 185, 19, 0.15);
+      border-color: #FDB913;
+    }
+    
+    .plan-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .plan-card.selected {
+      border-color: #FDB913;
+      background: linear-gradient(135deg, #FFF9E6 0%, #ffffff 100%);
+      box-shadow: 0 8px 30px rgba(253, 185, 19, 0.2);
+    }
+    
+    .plan-card.selected::before {
+      transform: scaleX(1);
+    }
+    
+    .plan-visual {
+      margin-bottom: 15px;
+      text-align: center;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+    
+    .plan-image {
+      width: 100%;
+      height: 160px;
+      object-fit: contain;
+      border-radius: 12px;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .plan-card:hover .plan-image {
+      transform: scale(1.05);
+    }
+    
+    .plan-placeholder {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #FFF9E6 0%, #f5f5f5 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      font-weight: 800;
+      color: #FDB913;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .plan-card:hover .plan-placeholder {
+      transform: scale(1.1) rotate(5deg);
+      color: #1d2159;
+    }
+    
+    .plan-header {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    
+    .plan-label {
+      font-size: 10px;
+      color: #FDB913;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 5px;
+      font-weight: 700;
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(253, 185, 19, 0.1);
+      border-radius: 20px;
+    }
+    
+    .plan-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #1d2159;
+      margin-bottom: 5px;
+      transition: color 0.3s;
+    }
+    
+    .plan-card:hover .plan-title {
+      color: #1d2159;
+    }
+    
+    .plan-subtitle {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    
+    .plan-specs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 15px;
+      background: linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%);
+      border-radius: 12px;
+      border: 1px solid #f0f0f0;
+    }
+    
+    .spec {
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    
+    .plan-card:hover .spec {
+      transform: translateY(-2px);
+    }
+    
+    .spec-label {
+      font-size: 9px;
+      color: #999;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
+    }
+    
+    .spec-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1d2159;
+      background: linear-gradient(135deg, #1d2159 0%, #FDB913 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .plan-description {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    
+    .plan-content {
+      font-size: 11px;
+      color: #2c2c2c;
+      line-height: 1.6;
+      margin-bottom: 0;
+      padding: 15px;
+      background: linear-gradient(135deg, #FFF9E6 0%, #ffffff 100%);
+      border-radius: 10px;
+      text-align: left;
+      border-left: 3px solid #FDB913;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .plan-card:hover .plan-content {
+      max-height: 300px;
+      opacity: 1;
+      margin-bottom: 10px;
+    }
+    
+    .plan-content strong {
+      color: #1d2159;
+      font-weight: 700;
+    }
+    
+    .plan-duration {
+      margin-bottom: 15px;
+      margin-top: 10px;
+    }
+    
+    .plan-duration label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #1d2159;
+      margin-bottom: 8px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .plan-duration select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Heebo', sans-serif;
+      font-weight: 600;
+      color: #1d2159;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231d2159' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 35px;
+    }
+    
+    .plan-duration select:hover {
+      border-color: #FDB913;
+      box-shadow: 0 2px 8px rgba(253, 185, 19, 0.2);
+    }
+    
+    .plan-duration select:focus {
+      outline: none;
+      border-color: #FDB913;
+      box-shadow: 0 0 0 3px rgba(253, 185, 19, 0.1);
+    }
+    
+    .plan-cta {
+      background: linear-gradient(135deg, #FDB913 0%, #ffd54f 100%);
+      color: #1d2159 !important;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(253, 185, 19, 0.3);
+    }
+    
+    .plan-cta::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+      z-index: 0;
+    }
+    
+    .plan-cta:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .plan-cta:hover {
+      background: linear-gradient(135deg, #1d2159 0%, #2c2c5e 100%) !important;
+      color: #ffffff !important;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(253, 185, 19, 0.4);
+    }
+    
+    .plan-cta:active {
+      transform: translateY(-1px);
+      color: #ffffff !important;
+    }
+    
+    /* Order Form */
+    .order-form {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      display: none;
+    }
+    
+    .order-form.active {
+      display: block;
+    }
+    
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #FFF9E6;
+      border: 2px solid #FDB913;
+      border-radius: 12px;
+    }
+    
+    .form-header h2 {
+      font-size: 24px;
+      color: #1d2159;
+      margin-bottom: 10px;
+    }
+    
+    .price-badge {
+      display: inline-block;
+      background: #FDB913;
+      color: #1d2159;
+      padding: 10px 25px;
+      border-radius: 50px;
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 10px;
+    }
+    
+    .form-benefits {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin: 20px 0 30px;
+    }
+    
+    .benefit {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: #2c2c2c;
+    }
+    
+    .benefit::before {
+      content: "✓";
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .form-section {
+      margin-bottom: 30px;
+    }
+    
+    .form-section h3 {
+      font-size: 20px;
+      color: #1d2159;
+      margin-bottom: 20px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1d2159;
+      margin-bottom: 8px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #d2d7da;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Heebo', sans-serif;
+      transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #FDB913;
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .form-note {
+      font-size: 12px;
+      color: #666;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    
+    .btn-back {
+      flex: 1;
+      background: #f8f8f8;
+      color: #1d2159;
+      padding: 15px 30px;
+      border: 2px solid #d2d7da;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-back:hover {
+      background: #e8e8e8;
+    }
+    
+    .btn-submit {
+      flex: 2;
+      background: #FDB913;
+      color: #1d2159;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-submit:hover {
+      background: #e5a711;
+      transform: translateY(-2px);
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    /* Info Section */
+    .info-section {
+      background: #ffffff;
+      padding: 60px 20px;
+      border-top: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .info-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 45% 55%;
+      gap: 50px;
+      align-items: stretch;
+    }
+    
+    .info-gallery {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 450px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    .slider-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .slider-track {
+      display: flex;
+      transition: transform 0.5s ease;
+      height: 100%;
+    }
+    
+    .slider-slide {
+      min-width: 100%;
+      height: 100%;
+    }
+    
+    .slider-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(29, 33, 89, 0.8);
+      color: #fff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+    
+    .slider-btn:hover {
+      background: #FDB913;
+      color: #1d2159;
+    }
+    
+    .slider-btn.prev {
+      left: 10px;
+    }
+    
+    .slider-btn.next {
+      right: 10px;
+    }
+    
+    .slider-dots {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+    
+    .slider-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .slider-dot.active {
+      background: #FDB913;
+      width: 30px;
+      border-radius: 5px;
+    }
+    
+    .info-content {
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 450px;
+    }
+    
+    .info-content h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1d2159;
+      margin-bottom: 25px;
+      line-height: 1.3;
+    }
+    
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex-grow: 1;
+    }
+    
+    .info-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.3s;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .info-list li:hover {
+      padding-left: 10px;
+      background: rgba(253, 185, 19, 0.05);
+    }
+    
+    .info-list li::before {
+      content: "✓";
+      color: #FDB913;
+      font-weight: 800;
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .info-list li strong {
+      color: #1d2159;
+      font-weight: 700;
+    }
+    
+    .info-note {
+      margin-top: 25px;
+      padding: 18px;
+      background: linear-gradient(135deg, #FFF9E6 0%, #ffffff 100%);
+      border-left: 4px solid #FDB913;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #2c2c2c;
+      line-height: 1.6;
+    }
+    
+    /* How It Works Section */
+    .how-it-works {
+      background: #f8f8f8;
+      padding: 50px 20px;
+    }
+    
+    .how-it-works h2 {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 800;
+      color: #1d2159;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .steps-row {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+    
+    .step-item {
+      text-align: center;
+      padding: 35px 25px 30px;
+      background: #fff;
+      border-radius: 12px;
+      transition: all 0.3s;
+      position: relative;
+    }
+    
+    .step-item:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .step-icon {
+      width: 180px;
+      height: 140px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .step-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    .step-number {
+      width: 40px;
+      height: 40px;
+      background: #FDB913;
+      color: #1d2159;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      flex-shrink: 0;
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 8px rgba(253, 185, 19, 0.4);
+      z-index: 10;
+    }
+    
+    .step.active .step-number {
+      background: #FDB913;
+    }
+    
+    .step:not(.active) .step-number {
+      background: #e0e0e0;
+      color: #999;
+    }
+    
+    .step-item h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1d2159;
+      margin-bottom: 12px;
+    }
+    
+    .step-item p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+    
+    @media (max-width: 768px) {
+      .steps-container {
+        flex-direction: column;
+      }
+      
+      .plans-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-benefits {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      
+      .steps-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-columns {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+    
+    /* Footer */
+    .disclaimer-box {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px 30px;
+      background: #fff;
+      border: 2px solid #FDB913;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .disclaimer-box h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1d2159;
+      margin-bottom: 10px;
+    }
+    
+    .disclaimer-box p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+    
+    .footer-cta-section {
+      background: #fff;
+      padding: 60px 20px 120px;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 80px), 50% 100%, 0 calc(100% - 80px));
+    }
+    
+    .footer-cta-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      padding-bottom: 40px;
+    }
+    
+    .footer-cta-content h2 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1d2159;
+      margin-bottom: 25px;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+    
+    .footer-cta-content p {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+    
+    .footer-cta-content p a {
+      color: #1d2159;
+      text-decoration: underline;
+    }
+    
+    .cta-phone {
+      margin: 30px 0;
+    }
+    
+    .cta-phone p {
+      font-size: 16px;
+      color: #1d2159;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .cta-phone h3 {
+      font-size: 36px;
+      font-weight: 800;
+      color: #1d2159;
+      margin: 0;
+    }
+    
+    .contact-form-btn {
+      display: inline-block;
+      background: #FDB913;
+      color: #1d2159;
+      padding: 12px 30px;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.3s;
+      text-transform: uppercase;
+    }
+    
+    .contact-form-btn:hover {
+      background: #e5a711;
+      transform: translateY(-2px);
+    }
+    
+    .diagonal-cut {
+      position: relative;
+    }
+    
+    .scroll-top-btn {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background: #1d2159 !important;
+      color: #fff !important;
+      border-radius: 50%;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    .scroll-top-btn:hover {
+      background: #FDB913;
+      color: #1d2159;
+    }
+    
+    .scroll-top-btn svg {
+      width: 24px !important;
+      height: 20px !important;
+      fill: #fff !important;
+    }
+    
+    .scroll-top-btn svg path {
+      fill: #fff !important;
+    }
+    
+    .scroll-top-btn svg g {
+      fill: #fff !important;
+    }
+    
+    footer {
+      background: #ececec !important;
+      padding: 80px 20px 50px;
+    }
+    
+    .footer-columns {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    
+    .footer-column h4 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1d2159;
+      margin-bottom: 20px;
+    }
+    
+    .footer-column ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .footer-column ul li {
+      margin-bottom: 10px;
+    }
+    
+    .footer-column ul li a {
+      color: #1d2159;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    
+    .footer-column ul li a:hover {
+      color: #FDB913;
+      text-decoration: underline;
+    }
+    
+    .footer-column p {
+      font-size: 14px;
+      color: #1d2159;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    
+    .footer-column a.contact-link {
+      color: #1d2159;
+      text-decoration: underline;
+      font-size: 14px;
+    }
+    
+    .review-badge {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    
+    .review-score-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+    }
+    
+    .review-score-container svg {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .review-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+    
+    .review-stat {
+      text-align: center;
+    }
+    
+    .review-stat strong {
+      display: block;
+      font-size: 18px;
+      color: #1d2159;
+    }
+    
+    .review-stat span {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .view-reviews-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 25px;
+      background: #fff;
+      border: 2px solid #1d2159;
+      color: #1d2159;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+    
+    .view-reviews-btn:hover {
+      background: #1d2159;
+      color: #fff;
+    }
+    
+    .footer-note {
+      font-size: 12px;
+      color: #666;
+      font-style: italic;
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px solid #d2d7da;
+    }
+    
+    .footer-bottom {
+      background: #1d2159;
+      padding: 20px;
+      color: #fff;
+    }
+    
+    .footer-bottom-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .social-links a {
+      color: #fff;
+      font-size: 20px;
+      transition: color 0.3s;
+    }
+    
+    .social-links a:hover {
+      color: #FDB913;
+    }
+    
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .footer-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.3s;
+    }
+    
+    .footer-links a:hover {
+      color: #FDB913;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container">
+      <div class="top-bar-left">
+        <span>⭐ <strong>8.9</strong> on customer reviews</span>
+        <span>Competitive <strong>price</strong></span>
+        <span>Excellent <strong>security</strong></span>
+        <span>Always available: <strong>085 - 018 1303</strong></span>
+      </div>
+      <div class="top-bar-right">
+        <a href="#" class="btn-kubox">I want a Kubox <span>→</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <a href="/" class="logo-text">
+        <img src="assets/kubox-logo.png" alt="KUBOX" class="logo-img">
+      </a>
+      <nav>
+        <a href="#home">Home</a>
+        <a href="#storage">Our storage spaces <span class="dropdown-arrow">▾</span></a>
+        <a href="#how-it-works">How does it work <span class="dropdown-arrow">▾</span></a>
+        <a href="#where">Where do we work <span class="dropdown-arrow">▾</span></a>
+        <a href="#storage-for">Storage for <span class="dropdown-arrow">▾</span></a>
+        <a href="#commercial">Commercial <span class="dropdown-arrow">▾</span></a>
+        <a href="#about">About us <span class="dropdown-arrow">▾</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Progress Steps -->
+  <div class="progress-steps">
+    <div class="steps-container">
+      <div class="step active" id="step1">
+        <div class="step-content">
+          <h3>Choose Storage Plan</h3>
+          <p>Select the right size for your needs</p>
+        </div>
+        <div class="step-number">1</div>
+      </div>
+      <div class="step" id="step2">
+        <div class="step-content">
+          <h3>Fill in your data</h3>
+          <p>Enter your contact and delivery details</p>
+        </div>
+        <div class="step-number">2</div>
+      </div>
+      <div class="step" id="step3">
+        <div class="step-content">
+          <h3>Review & Book</h3>
+          <p>Confirm and schedule pickup</p>
+        </div>
+        <div class="step-number">3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1: Storage Plans -->
+  <section class="storage-plans" id="plansSection">
+    <div class="container">
+      <div id="loadingIndicator" style="text-align: center; padding: 40px;">
+        <p style="font-size: 18px; color: #1d2159;">Loading storage plans...</p>
+      </div>
+      <div class="plans-grid" id="productGrid" style="display: none;">
+        <!-- Products will be loaded here -->
+      </div>
+      <div id="errorIndicator" style="display: none; text-align: center; padding: 40px;">
+        <p style="font-size: 18px; color: #e74c3c;">Failed to load products. Please check console for details.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Info Section -->
+  <section class="info-section">
+    <div class="info-container">
+      <div class="info-gallery">
+        <div class="slider-container">
+          <div class="slider-track" id="sliderTrack">
+            <div class="slider-slide"><img src="assets/1.jpeg" alt="Storage container 1"></div>
+            <div class="slider-slide"><img src="assets/2.jpeg" alt="Storage container 2"></div>
+            <div class="slider-slide"><img src="assets/3.jpeg" alt="Storage container 3"></div>
+            <div class="slider-slide"><img src="assets/4.jpeg" alt="Storage container 4"></div>
+            <div class="slider-slide"><img src="assets/5.jpeg" alt="Storage container 5"></div>
+          </div>
+          <button class="slider-btn prev" onclick="moveSlide(-1)">‹</button>
+          <button class="slider-btn next" onclick="moveSlide(1)">›</button>
+          <div class="slider-dots" id="sliderDots"></div>
+        </div>
+      </div>
+      
+      <div class="info-content">
+        <h2>What you get with the storage container: S.</h2>
+        <ul class="info-list">
+          <li><strong>Dimensions</strong> – Each unit is approximately 2.3m x 2.1m x 1.7m</li>
+          <li><strong>Order online</strong> – Select quantity above and delivery date.</li>
+          <li><strong>Home delivery</strong> – Kubox will place the storage container at your door.</li>
+          <li><strong>Self-loading</strong> – You will have approximately 30-45 minutes to fill.</li>
+          <li><strong>We pick up</strong> – The box will be collected and stored safely.</li>
+          <li><strong>Access possible</strong> – You can access your belongings by appointment.</li>
+          <li><strong>Return whenever you want</strong> – We will return the box at your request.</li>
+          <li><strong>Flexible rental</strong> – Can be cancelled on a monthly basis, price includes transport and storage.</li>
+        </ul>
+        <div class="info-note">
+          Other sizes are available upon request; we can increase storage space if needed.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <h2>How Does It Work</h2>
+    <div class="steps-row">
+      <div class="step-item">
+        <div class="step-icon">
+          <div class="step-number">1</div>
+          <img src="assets/icon1.png" alt="Home delivery">
+        </div>
+        <h3>Home delivery</h3>
+        <p>We deliver your own Kubox to your home.</p>
+      </div>
+      
+      <div class="step-item">
+        <div class="step-icon">
+          <div class="step-number">2</div>
+          <img src="assets/icon2.png" alt="Load up">
+        </div>
+        <h3>Load up</h3>
+        <p>Load your own storage container at home.</p>
+      </div>
+      
+      <div class="step-item">
+        <div class="step-icon">
+          <div class="step-number">3</div>
+          <img src="assets/icon3.png" alt="We'll take care of the rest">
+        </div>
+        <h3>We'll take care of the rest</h3>
+        <p>We'll pick up your Kubox, take care of storage, and bring it back whenever you want.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 2: Order Form -->
+  <section class="order-form" id="orderForm">
+    <div class="form-header">
+      <h2 id="selectedPlanTitle">📦 Your storage space - Medium 10m3 X 2</h2>
+      <div class="form-benefits">
+        <div class="benefit">Visit the storage unit for free* (at home)</div>
+        <div class="benefit">Secure Storage Space</div>
+        <div class="benefit">10 to >50m3 storage space</div>
+        <div class="benefit">Storage unit free*</div>
+      </div>
+      <div class="price-badge" id="selectedPrice">Vanaf €108,00</div>
+    </div>
+
+    <form id="bookingForm">
+      <div class="form-section">
+        <h3>Bestel jouw Kubox opslagruimte</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Voornaam*</label>
+            <input type="text" name="firstName" required>
+          </div>
+          <div class="form-group">
+            <label>Achternaam*</label>
+            <input type="text" name="lastName" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>E-mailadres*</label>
+            <input type="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label>Telefoonnummer*</label>
+            <input type="tel" name="phone" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Straat*</label>
+            <input type="text" name="street" required>
+          </div>
+          <div class="form-group">
+            <label>Huisnummer*</label>
+            <input type="text" name="houseNumber" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Postcode*</label>
+            <input type="text" name="postalCode" required>
+          </div>
+          <div class="form-group">
+            <label>Woonplaats*</label>
+            <input type="text" name="city" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Wanneer wil je beginnen? (Startdatum huur)</label>
+          <input type="date" name="startDate">
+        </div>
+
+        <div class="form-group">
+          <label>Vragen of opmerkingen</label>
+          <textarea name="notes" placeholder="Any special requests or questions..."></textarea>
+        </div>
+
+        <p class="form-note">
+          Wij behandelen jouw gegevens vertrouwelijk en sturen geen ongewenste e-mails.
+        </p>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-back" onclick="goToStep(1)">← Back</button>
+        <button type="submit" class="btn-submit">Proceed to Checkout →</button>
+      </div>
+    </form>
+  </section>
+
+  <script>
+    let selectedProduct = null;
+    let currentStep = 1;
+
+    // Fetch products from Shopify
+    async function fetchProducts() {
+      const query = `
+        query {
+          products(first: 10) {
+            edges {
+              node {
+                id
+                title
+                description
+                handle
+                variants(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      priceV2 {
+                        amount
+                        currencyCode
+                      }
+                    }
+                  }
+                }
+                images(first: 5) {
+                  edges {
+                    node {
+                      url
+                      altText
+                    }
+                  }
+                }
+                featuredImage {
+                  url
+                  altText
+                }
+              }
+            }
+          }
+        }
+      `;
+
+      try {
+        const response = await fetch('/api/shopify/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+
+        const data = await response.json();
+        console.log('Shopify API Response:', data);
+        
+        if (data.data && data.data.products) {
+          const products = data.data.products.edges.map(e => e.node);
+          console.log('Products with images:', products);
+          renderProducts(products);
+        } else {
+          console.error('No products found or error:', data);
+          document.getElementById('loadingIndicator').style.display = 'none';
+          document.getElementById('errorIndicator').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Fetch Error:', error);
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('errorIndicator').style.display = 'block';
+      }
+    }
+
+    function renderProducts(products) {
+      // Hide loading, show grid
+      document.getElementById('loadingIndicator').style.display = 'none';
+      document.getElementById('productGrid').style.display = 'grid';
+      document.getElementById('errorIndicator').style.display = 'none';
+      
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = '';
+
+      if (!products || products.length === 0) {
+        document.getElementById('errorIndicator').style.display = 'block';
+        document.getElementById('errorIndicator').innerHTML = '<p style="font-size: 18px; color: #e74c3c;">No products found in your Shopify store.</p>';
+        return;
+      }
+
+      const sizeMap = {
+        'small': { 
+          label: 'S', 
+          units: '1', 
+          volume: '10 m³', 
+          weight: '160 kg', 
+          desc: '1 Kubox module • 10 m³ usable volume',
+          content: `<strong>1 Box = 10m3</strong><br><br>
+                    <strong>Sample content:</strong><br>
+                    • 1x single bed with mattress<br>
+                    • 1x compact wardrobe<br>
+                    • 1 x two-seater sofa<br>
+                    • 1 X Wardrobe<br>
+                    • 1 x Two-seater sofa<br>
+                    • 10-15 moving boxes`
+        },
+        'medium': { 
+          label: 'M', 
+          units: '2', 
+          volume: '20 m³', 
+          weight: '320 kg', 
+          desc: '2 Kubox modules • 20 m³ usable volume',
+          content: `<strong>2 Boxes = 20m3</strong><br><br>
+                    <strong>Sample content:</strong><br>
+                    • 1x double bed with mattress<br>
+                    • 2x wardrobes<br>
+                    • 1x dining table with 4 chairs<br>
+                    • 1x three-seater sofa<br>
+                    • 1x TV cabinet<br>
+                    • 20-30 moving boxes`
+        },
+        'large': { 
+          label: 'L', 
+          units: '3', 
+          volume: '30 m³', 
+          weight: '480 kg', 
+          desc: '3 Kubox modules • 30 m³ usable volume',
+          content: `<strong>3 Boxes = 30m3</strong><br><br>
+                    <strong>Sample content:</strong><br>
+                    • 2x double beds with mattresses<br>
+                    • 3x wardrobes<br>
+                    • 1x dining set (table + 6 chairs)<br>
+                    • 1x large sofa set<br>
+                    • 1x refrigerator<br>
+                    • 1x washing machine<br>
+                    • 30-40 moving boxes`
+        },
+        'extra large': { 
+          label: 'XL', 
+          units: '4', 
+          volume: '40 m³', 
+          weight: '640 kg', 
+          desc: '4 Kubox modules • 40 m³ usable volume',
+          content: `<strong>4 Boxes = 40m3</strong><br><br>
+                    <strong>Sample content:</strong><br>
+                    • 3x double beds with mattresses<br>
+                    • 4x wardrobes<br>
+                    • 1x complete dining room set<br>
+                    • 1x complete living room set<br>
+                    • 1x refrigerator + freezer<br>
+                    • 1x washing machine + dryer<br>
+                    • 40-50 moving boxes`
+        },
+        'extra extra large': { 
+          label: 'XXL', 
+          units: '5', 
+          volume: '50 m³', 
+          weight: '800 kg', 
+          desc: '5 Kubox modules • 50 m³ usable volume',
+          content: `<strong>5 Boxes = 50m3</strong><br><br>
+                    <strong>Sample content:</strong><br>
+                    • Complete 3-bedroom house<br>
+                    • 4x beds with mattresses<br>
+                    • 5x wardrobes<br>
+                    • Complete kitchen appliances<br>
+                    • Complete living & dining sets<br>
+                    • Garden furniture<br>
+                    • 50+ moving boxes`
+        }
+      };
+
+      products.forEach(product => {
+        const titleLower = product.title.toLowerCase();
+        let sizeInfo = sizeMap['medium'];
+        
+        for (const [key, value] of Object.entries(sizeMap)) {
+          if (titleLower.includes(key)) {
+            sizeInfo = value;
+            break;
+          }
+        }
+
+        const variant = product.variants.edges[0].node;
+        const price = parseFloat(variant.priceV2.amount).toFixed(2);
+        const currency = variant.priceV2.currencyCode === 'EUR' ? '€' : '$';
+        
+        // Get product image
+        const imageUrl = product.featuredImage?.url || product.images?.edges[0]?.node?.url || '';
+        const imageAlt = product.featuredImage?.altText || product.title;
+
+        const card = document.createElement('div');
+        card.className = 'plan-card';
+        card._productData = { product, sizeInfo, price, currency };
+        
+        card.innerHTML = `
+          <div class="plan-visual">
+            ${imageUrl ? 
+              `<img src="${imageUrl}" alt="${imageAlt}" class="plan-image">` : 
+              `<div class="plan-placeholder">${sizeInfo.label}</div>`
+            }
+          </div>
+          <div class="plan-header">
+            <p class="plan-label">KUBOX STORAGE PLAN</p>
+            <h3 class="plan-title">${sizeInfo.label} - ${product.title}</h3>
+            <p class="plan-subtitle">What fits in a ${titleLower}?</p>
+          </div>
+          <div class="plan-specs">
+            <div class="spec">
+              <div class="spec-label">KUBOX UNITS</div>
+              <div class="spec-value">${sizeInfo.units}</div>
+            </div>
+            <div class="spec">
+              <div class="spec-label">VOLUME</div>
+              <div class="spec-value">${sizeInfo.volume}</div>
+            </div>
+            <div class="spec">
+              <div class="spec-label">MAX WEIGHT</div>
+              <div class="spec-value">${sizeInfo.weight}</div>
+            </div>
+          </div>
+          <p class="plan-description">${sizeInfo.desc}</p>
+          ${sizeInfo.content ? `<div class="plan-content">${sizeInfo.content}</div>` : ''}
+          <div class="plan-duration">
+            <label>Rental Period*</label>
+            <select class="duration-select" data-product-id="${product.id}">
+              <option value="">Select duration</option>
+              <option value="1">1 month</option>
+              <option value="3">3 months</option>
+              <option value="6">6 months</option>
+              <option value="12">12 months</option>
+            </select>
+          </div>
+          <button class="plan-cta" onclick="selectPlanWithDuration('${product.id}', event)">Continue →</button>
+        `;
+        
+        grid.appendChild(card);
+      });
+    }
+
+    let selectedDuration = null;
+
+    function selectPlanWithDuration(productId, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const card = event.target.closest('.plan-card');
+      const durationSelect = card.querySelector('.duration-select');
+      const duration = durationSelect.value;
+      
+      if (!duration) {
+        alert('Please select a rental period');
+        durationSelect.focus();
+        return;
+      }
+      
+      selectedDuration = duration;
+      
+      // Find the product data
+      const productData = card._productData;
+      if (productData) {
+        selectPlan(productData.product, productData.sizeInfo, productData.price, productData.currency, duration);
+      }
+    }
+
+    function selectPlan(product, sizeInfo, price, currency, duration) {
+      selectedProduct = { product, sizeInfo, price, currency, duration };
+      
+      // Update form header
+      document.getElementById('selectedPlanTitle').textContent = 
+        `📦 Your storage space - ${sizeInfo.label} ${product.title} (${duration} month${duration > 1 ? 's' : ''})`;
+      document.getElementById('selectedPrice').textContent = 
+        `Vanaf ${currency}${price}`;
+      
+      goToStep(2);
+    }
+
+    function goToStep(step) {
+      currentStep = step;
+      
+      // Update step indicators
+      document.querySelectorAll('.step').forEach((el, i) => {
+        el.classList.remove('active', 'completed');
+        if (i + 1 < step) el.classList.add('completed');
+        if (i + 1 === step) el.classList.add('active');
+      });
+      
+      // Show/hide sections
+      document.getElementById('plansSection').style.display = step === 1 ? 'block' : 'none';
+      document.getElementById('orderForm').classList.toggle('active', step === 2);
+      
+      // Hide info section and how-it-works when on step 2
+      const infoSection = document.querySelector('.info-section');
+      const howItWorks = document.querySelector('.how-it-works');
+      if (infoSection) infoSection.style.display = step === 1 ? 'block' : 'none';
+      if (howItWorks) howItWorks.style.display = step === 1 ? 'block' : 'none';
+    }
+
+    // Handle form submission
+    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!selectedProduct) {
+        alert('Please select a storage plan first');
+        return;
+      }
+
+      const formData = new FormData(e.target);
+      const customerData = Object.fromEntries(formData);
+      
+      // Show loading state
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Processing...';
+      submitBtn.disabled = true;
+      
+      try {
+        // Get variant ID
+        const variantId = selectedProduct.product.variants.edges[0].node.id;
+        console.log('Creating checkout with variant ID:', variantId);
+        console.log('Customer data:', customerData);
+        
+        // Create checkout using Shopify Storefront API
+        const checkoutMutation = `
+          mutation checkoutCreate($input: CheckoutCreateInput!) {
+            checkoutCreate(input: $input) {
+              checkout {
+                id
+                webUrl
+              }
+              checkoutUserErrors {
+                code
+                field
+                message
+              }
+            }
+          }
+        `;
+        
+        const variables = {
+          input: {
+            lineItems: [
+              {
+                variantId: variantId,
+                quantity: 1
+              }
+            ],
+            email: customerData.email,
+            shippingAddress: {
+              firstName: customerData.firstName,
+              lastName: customerData.lastName,
+              address1: `${customerData.street} ${customerData.houseNumber}`,
+              city: customerData.city,
+              zip: customerData.postalCode,
+              country: 'NL',
+              phone: customerData.phone
+            },
+            note: `Rental Period: ${selectedProduct.duration} months\nStart Date: ${customerData.startDate}\nNotes: ${customerData.notes || 'N/A'}`
+          }
+        };
+        
+        console.log('Sending checkout request...');
+        const response = await fetch('/api/shopify/checkout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            query: checkoutMutation,
+            variables: variables
+          })
+        });
+        
+        console.log('Response status:', response.status);
+        const result = await response.json();
+        console.log('Checkout result:', result);
+        
+        if (result.data?.checkoutCreate?.checkout?.webUrl) {
+          // Redirect to Shopify checkout
+          window.location.href = result.data.checkoutCreate.checkout.webUrl;
+        } else if (result.data?.checkoutCreate?.checkoutUserErrors?.length > 0) {
+          const errors = result.data.checkoutCreate.checkoutUserErrors;
+          alert('Checkout error: ' + errors.map(e => e.message).join(', '));
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        } else {
+          throw new Error('Failed to create checkout');
+        }
+      } catch (error) {
+        console.error('Checkout error:', error);
+        alert('Failed to create checkout. Please try again or contact support.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Load products on page load
+    fetchProducts();
+
+    // Image Slider
+    let currentSlide = 0;
+    const totalSlides = 5;
+    const sliderTrack = document.getElementById('sliderTrack');
+    const dotsContainer = document.getElementById('sliderDots');
+
+    // Create dots
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'slider-dot';
+      if (i === 0) dot.classList.add('active');
+      dot.onclick = () => goToSlide(i);
+      dotsContainer.appendChild(dot);
+    }
+
+    function moveSlide(direction) {
+      currentSlide += direction;
+      if (currentSlide < 0) currentSlide = totalSlides - 1;
+      if (currentSlide >= totalSlides) currentSlide = 0;
+      updateSlider();
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateSlider();
+    }
+
+    function updateSlider() {
+      sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      // Update dots
+      const dots = dotsContainer.querySelectorAll('.slider-dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSlide);
+      });
+    }
+
+    // Auto-play slider
+    setInterval(() => {
+      moveSlide(1);
+    }, 5000);
+
+    // Scroll to top
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+  <!-- Disclaimer Box -->
+  <div class="disclaimer-box">
+    <h4>All items listed are just examples of what will fit in a storage unit.</h4>
+    <p>Customers should make their own assessments when planning their storage needs. For more information or a detailed quote, please contact our experts.</p>
+  </div>
+
+  <!-- Footer CTA -->
+  <div class="footer-cta-section">
+    <div class="footer-cta-content">
+      <h2>DON'T HESITATE TO CONTACT US.<br>WE'RE HAPPY TO HELP!</h2>
+      <p>Take advantage of Kubox Storage's excellent accessibility and competitive rental rates. Interested in renting secure storage space from us? Call Kubox Storage at 085 - 018 1303 or email <a href="mailto:klantenservice@kubox.nl">klantenservice@kubox.nl</a>. We're happy to provide a free quote or consultation. You can also contact us with any questions about our storage options, packaging materials, or our Domicile Service.</p>
+      <div class="cta-phone">
+        <p>Call us:</p>
+        <h3>085 - 018 1303</h3>
+      </div>
+      <a href="#" class="contact-form-btn">CONTACT FORM →</a>
+    </div>
+    <div class="diagonal-cut">
+      <div class="scroll-top-btn" onclick="scrollToTop()">
+        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g fill="currentColor" fill-rule="evenodd" transform="matrix(1 0 0 -1 0 16)">
+            <path d="m0 .70124953v6.98588709l11 7.45161288v-6.52016126z" />
+            <path d="m11 .70124953v6.98588709l11 7.45161288v-6.52016126z" transform="matrix(-1 0 0 1 33 0)" />
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-columns">
+      <!-- Kubox Locations -->
+      <div class="footer-column">
+        <h4>Kubox Locations</h4>
+        <ul>
+          <li><a href="#">Storage space Amsterdam</a></li>
+          <li><a href="#">Storage space Rotterdam North</a></li>
+          <li><a href="#">Storage space Rotterdam South</a></li>
+          <li><a href="#">Storage space Schiedam</a></li>
+        </ul>
+      </div>
+
+      <!-- Storage Space Left -->
+      <div class="footer-column">
+        <h4>Storage Space Left</h4>
+        <ul>
+          <li><a href="#">Storage space Almere</a></li>
+          <li><a href="#">Storage space Alphen aan den Rijn</a></li>
+          <li><a href="#">Storage space Amersfoort</a></li>
+          <li><a href="#">Storage space Amstelveen</a></li>
+          <li><a href="#">Storage space Den Bosch</a></li>
+          <li><a href="#">Storage space The Hague</a></li>
+          <li><a href="#">Storage space Haarlem</a></li>
+          <li><a href="#">Storage space Rotterdam</a></li>
+          <li><a href="#">Storage space Utrecht</a></li>
+          <li><a href="#">Storage space Zoetermeer</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-column">
+        <h4>Contact</h4>
+        <p><strong>Kubox Storage Space</strong><br>
+        Professor WH Keesomlaan 1<br>
+        1183 DJ Amstelveen</p>
+        <p><a href="mailto:info@kubox.nl" class="contact-link">Send us an email</a></p>
+        <p><a href="tel:0850181303" class="contact-link">085 - 018 1303</a></p>
+        
+        <h4 style="margin-top: 30px;">Blog</h4>
+        <ul>
+          <li><a href="#">The 5 ultimate tips for a stress-free move</a></li>
+          <li><a href="#">From toddler house to teenage nest</a></li>
+          <li><a href="#">The storage of Local Logistics</a></li>
+          <li><a href="#">Living together: what do you (not) move with you?</a></li>
+          <li><a href="#">Business storage space provides room to grow</a></li>
+          <li><a href="#">More blog articles</a></li>
+        </ul>
+      </div>
+
+      <!-- Reviews -->
+      <div class="footer-column">
+        <h4>Kubox Storage Space on Customers Tell</h4>
+        <div class="review-badge">
+          <div class="review-score-container">
+            <svg viewBox="0 0 97.3 96.3" xmlns="http://www.w3.org/2000/svg" style="width: 80px; height: 80px;">
+              <circle cx="48.5" cy="47" fill="#fff" r="47"/>
+              <path d="M34.3 19.9L26.7 5.4C14.1 12 4.8 24.1 2.2 38.6l16.5 3c1.5-9.4 7.4-17.4 15.6-21.7" fill="#ffcb12"/>
+              <path d="M18.4 46.3c0-1.6.1-3.1.4-4.6l-16.5-3c-.5 2.6-.7 5.3-.8 8 0 3.8.4 7.5 1.2 11.1L19.4 54c-.7-2.6-1-5.1-1-7.7" fill="#dc892a"/>
+              <path d="M19.3 53.8L2.6 57.6c1.2 5.1 3.2 9.9 5.9 14.3l14.8-9.2c-1.8-2.6-3.1-5.7-4-8.9" fill="#ec9d21"/>
+              <path d="M23.3 62.8L8.5 72c2.2 3.5 4.8 6.7 7.8 9.6C8.2 84.1 0 85.3 0 85.3c.3.3 9.5 6.6 24 9.6l11.1-21.6c-4.7-2.5-8.8-6.1-11.8-10.5" fill="#cf3c27"/>
+              <path d="M48.2 76.1c-4.7 0-9.1-1.1-13-3L24.1 94.7c7 1.5 15.3 2.1 24.5 1V76.1z" fill="#dd6927"/>
+              <path d="M48.5 76.1v19.7c4.3-.5 8.7-1.5 13.3-2.9 4.1-1.2 7.9-3 11.4-5.2l-9.7-15.8c-4.3 2.6-9.4 4.1-15 4.2" fill="#95bf3d"/>
+              <path d="M78 46.3c0 10.8-5.8 20.3-14.4 25.5l9.7 15.8c6.7-4.2 12.3-10.1 16.2-17.1 3.8-6.8 6-14.6 6.1-22.8 0-3.6-.3-7.1-1-10.5l-17.1 3.7c.3 1.7.5 3.5.5 5.4" fill="#c9d22c"/>
+              <path d="M49.1 0C41-.1 33.4 1.8 26.7 5.3l7.6 14.5c4.1-2.2 8.9-3.4 13.9-3.4 14.6 0 26.8 10.5 29.3 24.4l17.1-3.7C90.1 16.2 71.5.3 49.1 0" fill="#e7df17"/>
+              <text x="48.5" y="55" text-anchor="middle" style="font-size: 28px; font-weight: 700; fill: #1d2159;">8.9</text>
+            </svg>
+          </div>
+          <div class="review-stats">
+            <div class="review-stat">
+              <strong>1,305</strong>
+              <span>Reviews</span>
+            </div>
+            <div class="review-stat">
+              <strong>96%</strong>
+              <span>Recommendation</span>
+            </div>
+          </div>
+          <a href="#" class="view-reviews-btn">VIEW REVIEWS →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      * Free (home) delivery and collection is in the Randstad region and depends on the number of months rented.
+    </div>
+  </footer>
+
+  <!-- Footer Bottom -->
+  <div class="footer-bottom">
+    <div class="footer-bottom-content">
+      <div class="social-links">
+        <a href="#" aria-label="Facebook">f</a>
+        <a href="#" aria-label="Instagram">📷</a>
+        <a href="#" aria-label="LinkedIn">in</a>
+        <a href="#" aria-label="YouTube">▶</a>
+      </div>
+      <div class="footer-links">
+        <a href="#">Cookie Policy</a>
+        <a href="#">Privacy Statement</a>
+        <a href="#">Disclaimer</a>
+        <a href="#">Sitemap</a>
+        <a href="#">General terms and conditions</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

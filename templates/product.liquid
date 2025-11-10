@@ -1,0 +1,171 @@
+{% assign product = all_products['dummy-storage-unit'] %}
+
+<div class="container product-page">
+  <div class="product-grid">
+    <div class="product-images">
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }}">
+      {% else %}
+        <div class="placeholder-image">
+          <p>Product Image</p>
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="product-info">
+      <h1>{{ product.title | default: "5x10 Storage Unit" }}</h1>
+      
+      <div class="product-price">
+        {% if product.price %}
+          {{ product.price | money }}
+        {% else %}
+          $75.00
+        {% endif %}
+        <span class="price-period">/ month</span>
+      </div>
+      
+      <div class="product-description">
+        {% if product.description != blank %}
+          {{ product.description }}
+        {% else %}
+          <p>Perfect for storing seasonal items, sports equipment, or small furniture pieces. Climate-controlled and secure.</p>
+          <ul>
+            <li>5 feet × 10 feet (50 sq ft)</li>
+            <li>Climate controlled</li>
+            <li>24/7 access</li>
+            <li>Security cameras</li>
+            <li>Ground floor access</li>
+          </ul>
+        {% endif %}
+      </div>
+      
+      <form action="/cart/add" method="post" class="product-form">
+        <input type="hidden" name="id" value="{{ product.variants.first.id | default: '12345' }}">
+        <button type="submit" class="btn btn-primary">
+          Reserve Now
+        </button>
+      </form>
+      
+      <div class="product-features">
+        <h3>Features:</h3>
+        <ul>
+          <li>✓ First month 50% off</li>
+          <li>✓ No long-term commitment</li>
+          <li>✓ Free moving truck rental</li>
+          <li>✓ Online payment</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .product-page {
+    padding: 40px 20px;
+  }
+  
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .product-images .placeholder-image {
+    background: #f0f0f0;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+  }
+  
+  .product-images img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .product-info h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  
+  .product-price {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2563eb;
+    margin-bottom: 20px;
+  }
+  
+  .price-period {
+    font-size: 18px;
+    color: #666;
+    font-weight: normal;
+  }
+  
+  .product-description {
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+  
+  .product-description ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 15px;
+  }
+  
+  .product-description ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .product-form {
+    margin-bottom: 30px;
+  }
+  
+  .btn {
+    padding: 15px 40px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .btn-primary {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: #1d4ed8;
+  }
+  
+  .product-features {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .product-features h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+  
+  .product-features ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .product-features ul li {
+    padding: 8px 0;
+  }
+  
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

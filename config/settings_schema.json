@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Theme settings",
+    "settings": [
+      { "type": "color", "id": "brand_color", "label": "Brand color", "default": "#e11111" },
+      { "type": "image_picker", "id": "logo", "label": "Logo" }
+    ]
+  }
+]

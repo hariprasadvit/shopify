@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "hero": { "type": "hero-banner" },
+    "features": { "type": "feature-cards" },
+    "sizes": { "type": "size-cards" },
+    "cta": { "type": "cta-strip" },
+    "faq": { "type": "faq-accordion" }
+  },
+  "order": ["hero", "features", "sizes", "cta", "faq"]
+}

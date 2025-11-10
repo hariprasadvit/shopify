@@ -1,0 +1,190 @@
+<div class="container collection-page">
+  <h1>{{ collection.title | default: "Storage Units" }}</h1>
+  
+  <div class="collection-description">
+    {% if collection.description != blank %}
+      {{ collection.description }}
+    {% else %}
+      <p>Choose the perfect storage unit for your needs. All units are climate-controlled and secure.</p>
+    {% endif %}
+  </div>
+  
+  <div class="product-grid">
+    <!-- Dummy Product 1 -->
+    <div class="product-card">
+      <div class="product-image">
+        <div class="placeholder-image">
+          <p>5x10 Unit</p>
+        </div>
+      </div>
+      <div class="product-details">
+        <h3>5x10 Storage Unit</h3>
+        <p class="product-size">50 sq ft</p>
+        <p class="product-price">$75.00 <span class="price-period">/ month</span></p>
+        <p class="product-description">Perfect for seasonal items and small furniture</p>
+        <a href="/products/5x10-storage-unit" class="btn btn-secondary">View Details</a>
+      </div>
+    </div>
+    
+    <!-- Dummy Product 2 -->
+    <div class="product-card">
+      <div class="product-image">
+        <div class="placeholder-image">
+          <p>10x10 Unit</p>
+        </div>
+      </div>
+      <div class="product-details">
+        <h3>10x10 Storage Unit</h3>
+        <p class="product-size">100 sq ft</p>
+        <p class="product-price">$125.00 <span class="price-period">/ month</span></p>
+        <p class="product-description">Ideal for one-bedroom apartment contents</p>
+        <a href="/products/10x10-storage-unit" class="btn btn-secondary">View Details</a>
+      </div>
+    </div>
+    
+    <!-- Dummy Product 3 -->
+    <div class="product-card">
+      <div class="product-image">
+        <div class="placeholder-image">
+          <p>10x20 Unit</p>
+        </div>
+      </div>
+      <div class="product-details">
+        <h3>10x20 Storage Unit</h3>
+        <p class="product-size">200 sq ft</p>
+        <p class="product-price">$200.00 <span class="price-period">/ month</span></p>
+        <p class="product-description">Great for two-bedroom home or vehicle storage</p>
+        <a href="/products/10x20-storage-unit" class="btn btn-secondary">View Details</a>
+      </div>
+    </div>
+    
+    <!-- Dummy Product 4 -->
+    <div class="product-card">
+      <div class="product-image">
+        <div class="placeholder-image">
+          <p>Climate Unit</p>
+        </div>
+      </div>
+      <div class="product-details">
+        <h3>Climate Controlled Unit</h3>
+        <p class="product-size">Various sizes</p>
+        <p class="product-price">From $95.00 <span class="price-period">/ month</span></p>
+        <p class="product-description">Temperature and humidity controlled storage</p>
+        <a href="/products/climate-controlled-unit" class="btn btn-secondary">View Details</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .collection-page {
+    padding: 40px 20px;
+  }
+  
+  .collection-page h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .collection-description {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    color: #666;
+  }
+  
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .product-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+  
+  .product-image .placeholder-image {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .product-details {
+    padding: 20px;
+  }
+  
+  .product-details h3 {
+    font-size: 20px;
+    margin: 0 0 8px 0;
+  }
+  
+  .product-size {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 12px 0;
+  }
+  
+  .product-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2563eb;
+    margin: 0 0 12px 0;
+  }
+  
+  .price-period {
+    font-size: 14px;
+    color: #666;
+    font-weight: normal;
+  }
+  
+  .product-description {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .btn-secondary {
+    background: #f3f4f6;
+    color: #1f2937;
+    border: 1px solid #d1d5db;
+  }
+  
+  .btn-secondary:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+  }
+  
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
