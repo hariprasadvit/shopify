@@ -1763,7 +1763,7 @@
 
         const variant = product.variants.edges[0].node;
         const price = parseFloat(variant.priceV2.amount).toFixed(2);
-        const currency = variant.priceV2.currencyCode === 'EUR' ? '€' : '$';
+        const currency = '€'; // Always use Euro
         
         // Get product image
         const imageUrl = product.featuredImage?.url || product.images?.edges[0]?.node?.url || '';
@@ -1782,7 +1782,7 @@
           </div>
           <div class="plan-header">
             <p class="plan-label">KUBOX STORAGE PLAN</p>
-            <h3 class="plan-title">${sizeInfo.label} - ${product.title}</h3>
+            <h3 class="plan-title">${product.title}</h3>
             <p class="plan-subtitle">What fits in a ${titleLower}?</p>
           </div>
           <div class="plan-specs">
@@ -1848,7 +1848,7 @@
       
       // Update form header
       document.getElementById('selectedPlanTitle').textContent = 
-        `📦 Your storage space - ${sizeInfo.label} ${product.title} (${duration} month${duration > 1 ? 's' : ''})`;
+        `📦 Your storage space - ${product.title} (${duration} month${duration > 1 ? 's' : ''})`;
       document.getElementById('selectedPrice').textContent = 
         `Vanaf ${currency}${price}`;
       
@@ -1961,16 +1961,29 @@
         const result = await response.json();
         console.log('Checkout result:', result);
         
+        if (result.errors) {
+          console.error('GraphQL Errors:', result.errors);
+          alert('Checkout API error: ' + JSON.stringify(result.errors));
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+          return;
+        }
+        
         if (result.data?.checkoutCreate?.checkout?.webUrl) {
           // Redirect to Shopify checkout
+          console.log('Redirecting to:', result.data.checkoutCreate.checkout.webUrl);
           window.location.href = result.data.checkoutCreate.checkout.webUrl;
         } else if (result.data?.checkoutCreate?.checkoutUserErrors?.length > 0) {
           const errors = result.data.checkoutCreate.checkoutUserErrors;
+          console.error('Checkout user errors:', errors);
           alert('Checkout error: ' + errors.map(e => e.message).join(', '));
           submitBtn.textContent = originalText;
           submitBtn.disabled = false;
         } else {
-          throw new Error('Failed to create checkout');
+          console.error('Unexpected response:', result);
+          alert('Failed to create checkout. Response: ' + JSON.stringify(result));
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
         }
       } catch (error) {
         console.error('Checkout error:', error);
