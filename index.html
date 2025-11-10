@@ -1900,15 +1900,15 @@
         console.log('Creating checkout with variant ID:', variantId);
         console.log('Customer data:', customerData);
         
-        // Create checkout using Shopify Storefront API
-        const checkoutMutation = `
-          mutation checkoutCreate($input: CheckoutCreateInput!) {
-            checkoutCreate(input: $input) {
-              checkout {
+        // Create cart using Shopify Storefront API (cartCreate replaces checkoutCreate)
+        const cartMutation = `
+          mutation cartCreate($input: CartInput!) {
+            cartCreate(input: $input) {
+              cart {
                 id
-                webUrl
+                checkoutUrl
               }
-              checkoutUserErrors {
+              userErrors {
                 code
                 field
                 message
@@ -1919,23 +1919,42 @@
         
         const variables = {
           input: {
-            lineItems: [
+            lines: [
               {
-                variantId: variantId,
+                merchandiseId: variantId,
                 quantity: 1
               }
             ],
-            email: customerData.email,
-            shippingAddress: {
-              firstName: customerData.firstName,
-              lastName: customerData.lastName,
-              address1: `${customerData.street} ${customerData.houseNumber}`,
-              city: customerData.city,
-              zip: customerData.postalCode,
-              country: 'NL',
-              phone: customerData.phone
+            buyerIdentity: {
+              email: customerData.email,
+              countryCode: 'NL'
             },
-            note: `Rental Period: ${selectedProduct.duration} months\nStart Date: ${customerData.startDate}\nNotes: ${customerData.notes || 'N/A'}`
+            attributes: [
+              {
+                key: 'Rental Period',
+                value: `${selectedProduct.duration} months`
+              },
+              {
+                key: 'Start Date',
+                value: customerData.startDate
+              },
+              {
+                key: 'Customer Name',
+                value: `${customerData.firstName} ${customerData.lastName}`
+              },
+              {
+                key: 'Address',
+                value: `${customerData.street} ${customerData.houseNumber}, ${customerData.postalCode} ${customerData.city}`
+              },
+              {
+                key: 'Phone',
+                value: customerData.phone
+              },
+              {
+                key: 'Notes',
+                value: customerData.notes || 'N/A'
+              }
+            ]
           }
         };
         
@@ -1952,14 +1971,14 @@
             'X-Shopify-Storefront-Access-Token': STOREFRONT_ACCESS_TOKEN
           },
           body: JSON.stringify({
-            query: checkoutMutation,
+            query: cartMutation,
             variables: variables
           })
         });
         
         console.log('Response status:', response.status);
         const result = await response.json();
-        console.log('Checkout result:', result);
+        console.log('Cart result:', result);
         
         if (result.errors) {
           console.error('GraphQL Errors:', result.errors);
@@ -1969,13 +1988,13 @@
           return;
         }
         
-        if (result.data?.checkoutCreate?.checkout?.webUrl) {
+        if (result.data?.cartCreate?.cart?.checkoutUrl) {
           // Redirect to Shopify checkout
-          console.log('Redirecting to:', result.data.checkoutCreate.checkout.webUrl);
-          window.location.href = result.data.checkoutCreate.checkout.webUrl;
-        } else if (result.data?.checkoutCreate?.checkoutUserErrors?.length > 0) {
-          const errors = result.data.checkoutCreate.checkoutUserErrors;
-          console.error('Checkout user errors:', errors);
+          console.log('Redirecting to:', result.data.cartCreate.cart.checkoutUrl);
+          window.location.href = result.data.cartCreate.cart.checkoutUrl;
+        } else if (result.data?.cartCreate?.userErrors?.length > 0) {
+          const errors = result.data.cartCreate.userErrors;
+          console.error('Cart user errors:', errors);
           alert('Checkout error: ' + errors.map(e => e.message).join(', '));
           submitBtn.textContent = originalText;
           submitBtn.disabled = false;
